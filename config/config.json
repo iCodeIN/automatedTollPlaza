@@ -1,0 +1,11 @@
+{
+    "serverConfig": {
+        "host": "",
+        "port": "80",
+        "readTimeout": 30,
+        "writeTimeout": 60
+    },
+    "mongoConfig": {
+        "host": "mongodb://localhost:27017"
+    }
+}

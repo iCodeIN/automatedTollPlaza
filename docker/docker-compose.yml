@@ -1,0 +1,17 @@
+version: '3'
+services:
+    mongo:
+        image: mongo:latest
+        container_name: tollPlaza-mongo
+        ports:
+            - 27017:27017
+    site-go:
+        build:
+            context: ../
+            dockerfile: ./docker/Dockerfile
+        container_name: tollPlaza
+        image: 'heisenberg-go:latest'
+        ports:
+            - 80:80
+        depends_on:
+            - mongo
