@@ -19,6 +19,21 @@ func (e TollErr) Error() string {
 	return e.Code + " : " + e.Message
 }
 
+// ToTollError takes error as argument and returns LeAPIError
+func ToTollError(err error) *TollErr {
+	if err == nil {
+		return nil
+	}
+	appErr, ok := err.(*TollErr)
+	if ok {
+		return appErr
+	}
+	return &TollErr{
+		Code:    "ERR",
+		Message: err.Error(),
+	}
+}
+
 var (
 	// ErrUnprocessableEntity ...
 	ErrUnprocessableEntity = NewErrorWithCode(

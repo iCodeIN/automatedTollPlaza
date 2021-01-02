@@ -4,10 +4,7 @@ import (
 	"automatedTollPlaze/pkg/errors"
 	"automatedTollPlaze/pkg/toll"
 	"encoding/json"
-	"math/rand"
 	"net/http"
-	"strconv"
-	"time"
 
 	"github.com/bnkamalesh/webgo/v4"
 	"github.com/go-playground/validator/v10"
@@ -51,17 +48,6 @@ func (api *API) issueTollTicket(w http.ResponseWriter, r *http.Request) {
 		webgo.R400(w, errors.ErrMissingFields)
 		return
 	}
-	requestData.TicketID = func() string {
-		id := rand.NewSource(time.Now().UnixNano())
-		return requestData.TollID + "-" + strconv.Itoa(int(id.Int63()))
-	}()
-	requestData.Price = func() float64 {
-		price := 100.0
-		if requestData.ReturnTollTicket {
-			price = 200.0
-		}
-		return price
-	}()
 	err := api.Handler.TollHandler.IssueToll(r.Context(), &requestData)
 	if err != nil {
 		webgo.R400(w, err)

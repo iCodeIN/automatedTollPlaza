@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 )
 
 // handler ..
@@ -45,16 +46,27 @@ func (h *handler) Health(ctx context.Context) error {
 }
 
 // Find ..
-func (h *handler) Find(ctx context.Context, database, collection string, filter map[string]interface{}, projection map[string]interface{}, result interface{}) error {
-	return h.getDatabase(database).C(collection).Find(filter).All(&result)
+func (h *handler) Find(ctx context.Context, database, collection string, filter map[string]interface{}, result interface{}) error {
+	bsonFilter := bson.M{}
+	for key, val := range filter {
+		bsonFilter[key] = val
+	}
+	if err := h.getDatabase(database).C(collection).Find(bsonFilter).One(result); err != nil && err != mgo.ErrNotFound {
+		return err
+	}
+	return nil
 }
 
-// UpsertMany ..
-func (h *handler) UpsertMany(ctx context.Context, database, collection string, filter map[string]interface{}, updateData interface{}, upsert bool) error {
+// Upsert ..
+func (h *handler) Upsert(ctx context.Context, database, collection string, filter map[string]interface{}, updateData interface{}) error {
+	bsonFilter := bson.M{}
+	for key, val := range filter {
+		bsonFilter[key] = val
+	}
 	updateData = map[string]interface{}{
 		"$set": updateData,
 	}
-	_, err := h.getDatabase(database).C(collection).Upsert(filter, updateData)
+	_, err := h.getDatabase(database).C(collection).Upsert(bsonFilter, updateData)
 	return err
 }
 
