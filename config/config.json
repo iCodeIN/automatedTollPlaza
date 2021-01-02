@@ -1,5 +1,5 @@
 {
-    "httpLog": true,
+    "httpLog": false,
     "serverConfig": {
         "host": "",
         "port": "80",

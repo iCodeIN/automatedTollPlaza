@@ -25,6 +25,29 @@ func NotFound() http.HandlerFunc {
 	})
 }
 
+// Home ..
+func (api *API) Home(w http.ResponseWriter, r *http.Request) {
+	home := map[string]string{
+		"startTime": api.AppContext.StartTime.String(),
+		"message":   "Welcome to Automated Toll Plaza",
+	}
+	webgo.R200(w, home)
+}
+
+// Health ..
+func (api *API) Health(w http.ResponseWriter, r *http.Request) {
+	healthResponse := struct {
+		StartTime  string                 `json:"startTime"`
+		Dependency map[string]interface{} `json:"dependency"`
+	}{
+		StartTime: api.AppContext.StartTime.String(),
+		Dependency: map[string]interface{}{
+			"database": api.AppContext.DbClient.Health(r.Context()) == nil,
+		},
+	}
+	webgo.R200(w, healthResponse)
+}
+
 // Routes ...
 func (api *API) Routes() []*webgo.Route {
 	return []*webgo.Route{

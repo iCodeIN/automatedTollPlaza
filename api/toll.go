@@ -10,35 +10,14 @@ import (
 
 	"github.com/bnkamalesh/webgo/v4"
 	"github.com/go-playground/validator/v10"
+	log "github.com/sirupsen/logrus"
 )
-
-// Home ..
-func (api *API) Home(w http.ResponseWriter, r *http.Request) {
-	home := map[string]string{
-		"startTime": api.AppContext.StartTime.String(),
-		"message":   "Welcome to Automated Toll Plaza",
-	}
-	webgo.R200(w, home)
-}
-
-// Health ..
-func (api *API) Health(w http.ResponseWriter, r *http.Request) {
-	healthResponse := struct {
-		StartTime  string                 `json:"startTime"`
-		Dependency map[string]interface{} `json:"dependency"`
-	}{
-		StartTime: api.AppContext.StartTime.String(),
-		Dependency: map[string]interface{}{
-			"database": api.AppContext.DbClient.Health(r.Context()) == nil,
-		},
-	}
-	webgo.R200(w, healthResponse)
-}
 
 // issueTollTicket ..
 func (api *API) issueTollTicket(w http.ResponseWriter, r *http.Request) {
 	requestData := toll.TicketToll{}
 	if err := json.NewDecoder(r.Body).Decode(&requestData); err != nil {
+		log.Error(err)
 		webgo.SendError(
 			w,
 			errors.ErrUnprocessableEntity,
@@ -47,10 +26,11 @@ func (api *API) issueTollTicket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := validator.New().Struct(requestData); err != nil {
+		log.Error(err)
 		webgo.R400(w, errors.ErrMissingFields)
 		return
 	}
-	err := api.Handler.TollHandler.IssueToll(r.Context(), &requestData)
+	err := api.Handler.TollHandler.IssueTollTicket(r.Context(), &requestData)
 	if err != nil {
 		webgo.R400(w, err)
 		return
@@ -72,6 +52,7 @@ func (api *API) getTicketIssueList(w http.ResponseWriter, r *http.Request) {
 		}(),
 	}
 	if err := validator.New().Struct(params); err != nil {
+		log.Error(err)
 		webgo.R400(w, errors.ErrMissingFields)
 		return
 	}
@@ -86,7 +67,7 @@ func (api *API) getTicketDetails(w http.ResponseWriter, r *http.Request) {
 	ticket := &toll.TicketToll{
 		TicketID: params["ticketId"],
 	}
-	tollTicketData, err := api.Handler.TollHandler.GetTicketDetails(r.Context(), ticket)
+	tollTicketData, err := api.Handler.TollHandler.GetTollTicketDetails(r.Context(), ticket)
 	if err != nil {
 		webgo.R400(w, err)
 	}

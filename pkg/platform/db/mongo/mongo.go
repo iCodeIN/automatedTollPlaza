@@ -7,6 +7,7 @@ import (
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
+	log "github.com/sirupsen/logrus"
 )
 
 // handler ..
@@ -28,6 +29,7 @@ type Cfg struct {
 func NewMongoClient(ctx context.Context, cfg Cfg) db.Service {
 	mgoClient, err := mgo.DialWithTimeout(cfg.Host, time.Duration(5)*time.Second)
 	if err != nil {
+		log.Panic(err)
 		panic(err)
 	}
 	return &handler{

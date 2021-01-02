@@ -11,13 +11,14 @@ import (
 	"time"
 
 	"github.com/jinzhu/copier"
+	log "github.com/sirupsen/logrus"
 )
 
 //Service ..
 type Service interface {
-	GetTicketDetails(ctx context.Context, ticket *TicketToll) (*TicketToll, error)
+	GetTollTicketDetails(ctx context.Context, ticket *TicketToll) (*TicketToll, error)
 	GetTicketIssueList(ctx context.Context, params *TicketListRequest) TicketListResponse
-	IssueToll(ctx context.Context, ticket *TicketToll) error
+	IssueTollTicket(ctx context.Context, ticket *TicketToll) error
 }
 
 // service ..
@@ -32,21 +33,28 @@ func NewTollService(ctx context.Context, appCtx *appcontext.AppContext) Service 
 	}
 }
 
-// IssueToll ..
-func (s *handler) IssueToll(ctx context.Context, ticket *TicketToll) error {
-	// filter := newTicketFilter(ticket).setRegistrationNoFilter().setTollIDFilter().getFilter()
-	// dbParams := db.Params{
-	// 	Database:   "toll",
-	// 	Collection: "tickets",
-	// 	Filter:     filter,
-	// 	Result:     &TicketToll{},
-	// }
-	// if err := s.AppCtx.DbClient.FindOne(ctx, dbParams); err != nil {
-	// 	return errors.ToTollError(err)
-	// }
+// IssueTollTicket ..
+func (s *handler) IssueTollTicket(ctx context.Context, ticket *TicketToll) error {
+	filter := newTicketFilter(ticket).setRegistrationNoFilter().getFilter()
+	filter["status"] = "ISSUED"
+	dbParams := db.Params{
+		Database:   "toll",
+		Collection: "tickets",
+		Filter:     filter,
+		Result:     &TicketToll{},
+	}
+	err := s.AppCtx.DbClient.FindOne(ctx, dbParams)
+	switch {
+	case err != nil && err != db.ErrNotFound:
+		log.Error(err)
+		return errors.ToTollError(err)
+	case err == nil:
+		log.Error(ErrPendingTollTickets)
+		return ErrPendingTollTickets
+	}
 	ticket.TicketID = func() string {
 		id := rand.NewSource(time.Now().UnixNano())
-		return ticket.TollID + "-" + strconv.Itoa(int(id.Int63()))
+		return ticket.TollID + strconv.Itoa(int(id.Int63()))
 	}()
 	ticket.Price = func() float64 {
 		price := 200.0
@@ -64,6 +72,7 @@ func (s *handler) IssueToll(ctx context.Context, ticket *TicketToll) error {
 		UpsertData: ticket,
 	}
 	if err := s.AppCtx.DbClient.InsertOne(ctx, params); err != nil {
+		log.Error(err)
 		return errors.ToTollError(err)
 	}
 	return nil
@@ -95,8 +104,8 @@ func (s *handler) GetTicketIssueList(ctx context.Context, params *TicketListRequ
 	return list
 }
 
-// GetTicketIssueList ..
-func (s *handler) GetTicketDetails(ctx context.Context, ticket *TicketToll) (*TicketToll, error) {
+// GetTollTicketDetails ..
+func (s *handler) GetTollTicketDetails(ctx context.Context, ticket *TicketToll) (*TicketToll, error) {
 	filter := newTicketFilter(ticket).setTicketIDFilter().filter
 	dbTicket := &TicketToll{}
 	dbParams := db.Params{
@@ -106,7 +115,32 @@ func (s *handler) GetTicketDetails(ctx context.Context, ticket *TicketToll) (*Ti
 		Result:     dbTicket,
 	}
 	if err := s.AppCtx.DbClient.FindOne(ctx, dbParams); err != nil {
+		log.Error(err)
 		return nil, errors.ToTollError(err)
 	}
 	return dbTicket, nil
+}
+
+// RedeemTollTicket ..
+func (s *handler) RedeemTollTicket(ctx context.Context, ticket *TicketToll) (*TicketToll, error) {
+	filter := newTicketFilter(ticket).setTicketIDFilter().getFilter()
+	dbParams := db.Params{
+		Database:   "toll",
+		Collection: "tickets",
+		Filter:     filter,
+		Result:     ticket,
+	}
+	err := s.AppCtx.DbClient.FindOne(ctx, dbParams)
+	if err != nil {
+		if err == db.ErrNotFound {
+			err = ErrInvalidTollTicket
+		}
+		log.Error(err)
+		return nil, err
+	}
+	if ticket.Status == "REDEEMED" {
+		log.Error(ErrAlreadyRedeemed)
+		return nil, ErrAlreadyRedeemed
+	}
+	return nil, nil
 }

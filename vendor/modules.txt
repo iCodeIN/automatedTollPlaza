@@ -2,8 +2,6 @@
 ## explicit
 github.com/bnkamalesh/webgo/v4
 github.com/bnkamalesh/webgo/v4/middleware
-# github.com/davecgh/go-spew v1.1.1
-## explicit
 # github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 ## explicit
 github.com/globalsign/mgo
@@ -26,13 +24,19 @@ github.com/jinzhu/copier
 ## explicit
 # github.com/leodido/go-urn v1.2.0
 github.com/leodido/go-urn
+# github.com/sirupsen/logrus v1.7.0
+## explicit
+github.com/sirupsen/logrus
 # github.com/stretchr/testify v1.6.1
 ## explicit
 # golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
 ## explicit
 golang.org/x/crypto/sha3
-# golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f
+# golang.org/x/sys v0.0.0-20201231184435-2d18734c6014
 ## explicit
 golang.org/x/sys/cpu
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/unix
+golang.org/x/sys/windows
 # gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127
 ## explicit
