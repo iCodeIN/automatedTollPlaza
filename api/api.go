@@ -31,17 +31,25 @@ func (api *API) Routes() []*webgo.Route {
 		{
 			Name:    "health",
 			Method:  http.MethodGet,
-			Pattern: "/",
+			Pattern: "/health",
 			Handlers: []http.HandlerFunc{
 				api.Health,
 			},
 		},
 		{
 			Name:    "Issue New Toll Ticket",
-			Method:  http.MethodGet,
+			Method:  http.MethodPost,
 			Pattern: "/issue",
 			Handlers: []http.HandlerFunc{
 				api.issueTollTicket,
+			},
+		},
+		{
+			Name:    "Home",
+			Method:  http.MethodGet,
+			Pattern: "/",
+			Handlers: []http.HandlerFunc{
+				api.Home,
 			},
 		},
 	}

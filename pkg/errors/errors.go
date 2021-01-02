@@ -18,3 +18,11 @@ func NewErrorWithCode(code, message string) TollErr {
 func (e TollErr) Error() string {
 	return e.Code + " : " + e.Message
 }
+
+var (
+	// ErrUnprocessableEntity ...
+	ErrUnprocessableEntity = NewErrorWithCode(
+		"ERR.HTTP.UNPROCESSABLEENTITY",
+		"Invalid Json",
+	)
+)
