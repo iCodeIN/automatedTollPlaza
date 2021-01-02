@@ -4,6 +4,7 @@ import (
 	// tollErr "automatedTollPlaze/pkg/errors"
 	"automatedTollPlaze/pkg/errors"
 	"automatedTollPlaze/pkg/platform/appcontext"
+	"automatedTollPlaze/pkg/platform/db"
 	"context"
 	"math/rand"
 	"strconv"
@@ -12,6 +13,7 @@ import (
 
 //Service ..
 type Service interface {
+	GetTicketIssueList(ctx context.Context, params *TicketListRequest) TicketListResponse
 	IssueToll(ctx context.Context, ticket *TicketToll) error
 }
 
@@ -30,8 +32,13 @@ func NewTollService(ctx context.Context, appCtx *appcontext.AppContext) Service 
 // IssueToll ..
 func (s *handler) IssueToll(ctx context.Context, ticket *TicketToll) error {
 	filter := newTicketFilter(ticket).setRegistrationNoFilter().setTollIDFilter().filter
-	findOneData := &TicketToll{}
-	if err := s.AppCtx.DbClient.Find(ctx, "toll", "tickets", filter, findOneData); err != nil {
+	dbParams := db.Params{
+		Database:   "toll",
+		Collection: "tickets",
+		Filter:     filter,
+		Result:     &TicketToll{},
+	}
+	if err := s.AppCtx.DbClient.FindOne(ctx, dbParams); err != nil {
 		return errors.ToTollError(err)
 	}
 	ticket.TicketID = func() string {
@@ -48,50 +55,46 @@ func (s *handler) IssueToll(ctx context.Context, ticket *TicketToll) error {
 	}()
 	ticket.IssuedTimeStamp = time.Now().UTC()
 	ticket.UpdatedTimeStamp = time.Now().UTC()
-	if err := s.AppCtx.DbClient.InsertOne(ctx, "toll", "tickets", ticket); err != nil {
+	params := db.Params{
+		Database:   "toll",
+		Collection: "tickets",
+		UpsertData: ticket,
+	}
+	if err := s.AppCtx.DbClient.InsertOne(ctx, params); err != nil {
 		return errors.ToTollError(err)
 	}
 	return nil
 }
 
-type filterMap struct {
-	filter map[string]interface{}
-	ticket *TicketToll
-}
-
-// newTicketFilter ..
-func newTicketFilter(ticket *TicketToll) filterMap {
-	return filterMap{
-		ticket: ticket,
-		filter: make(map[string]interface{}, 0),
+// GetTicketIssueList ..
+func (s *handler) GetTicketIssueList(ctx context.Context, params *TicketListRequest) TicketListResponse {
+	filter := make(map[string]interface{}, 0)
+	if len(params.RegistrationNo) > 0 {
+		filter["vehicleRegistrationNo"] = params.RegistrationNo
 	}
-}
-
-// setRegistrationNoFilter ..
-func (f filterMap) setRegistrationNoFilter() filterMap {
-	if f.ticket != nil {
-		f.filter["vehicleRegistrationNo"] = f.ticket.RegistrationNo
+	if len(params.TollID) > 0 {
+		filter["tollId"] = params.TollID
 	}
-	return f
-}
-
-// setTicketIDFilter ..
-func (f filterMap) setTicketIDFilter() filterMap {
-	if f.ticket != nil {
-		f.filter["ticketId"] = f.ticket.TicketID
+	if len(params.Status) > 0 {
+		filter["status"] = params.Status
 	}
-	return f
-}
-
-// setTollIDFilter ..
-func (f filterMap) setTollIDFilter() filterMap {
-	if f.ticket != nil {
-		f.filter["tollId"] = f.ticket.TollID
+	ticketList := make([]TicketToll, 0)
+	dbParams := db.Params{
+		Database:   "toll",
+		Collection: "tickets",
+		Filter:     filter,
+		Result:     &ticketList,
+		Pagination: &db.Paginate{
+			Start: params.Start,
+			Limit: params.Limit,
+		},
 	}
-	return f
-}
-
-// getFilter ..
-func (f filterMap) getFilter() map[string]interface{} {
-	return f.filter
+	s.AppCtx.DbClient.FindAll(ctx, dbParams)
+	list := TicketListResponse{
+		List:  ticketList,
+		Count: s.AppCtx.DbClient.Count(ctx, dbParams),
+		Start: params.Start,
+		Limit: params.Limit,
+	}
+	return list
 }

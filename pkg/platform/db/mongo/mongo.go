@@ -45,32 +45,59 @@ func (h *handler) Health(ctx context.Context) error {
 	return h.dbClient.Ping()
 }
 
-// Find ..
-func (h *handler) Find(ctx context.Context, database, collection string, filter map[string]interface{}, result interface{}) error {
+// FindOne ..
+func (h *handler) FindOne(ctx context.Context, param db.Params) error {
 	bsonFilter := bson.M{}
-	for key, val := range filter {
+	for key, val := range param.Filter {
 		bsonFilter[key] = val
 	}
-	if err := h.getDatabase(database).C(collection).Find(bsonFilter).One(result); err != nil && err != mgo.ErrNotFound {
+	if err := h.getDatabase(param.Database).C(param.Collection).Find(bsonFilter).One(param.Result); err != nil && err != mgo.ErrNotFound {
 		return err
 	}
 	return nil
 }
 
-// Upsert ..
-func (h *handler) Upsert(ctx context.Context, database, collection string, filter map[string]interface{}, updateData interface{}) error {
+// FindAll ..
+func (h *handler) FindAll(ctx context.Context, param db.Params) error {
 	bsonFilter := bson.M{}
-	for key, val := range filter {
+	for key, val := range param.Filter {
 		bsonFilter[key] = val
 	}
-	updateData = map[string]interface{}{
-		"$set": updateData,
+	query := h.getDatabase(param.Database).C(param.Collection).Find(bsonFilter)
+	if param.Pagination != nil {
+		query.Skip(param.Pagination.Start)
+		query.Limit(param.Pagination.Limit)
 	}
-	_, err := h.getDatabase(database).C(collection).Upsert(bsonFilter, updateData)
+	if err := query.All(param.Result); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Count ..
+func (h *handler) Count(ctx context.Context, params db.Params) int {
+	bsonFilter := bson.M{}
+	for key, val := range params.Filter {
+		bsonFilter[key] = val
+	}
+	count, _ := h.getDatabase(params.Database).C(params.Collection).Find(bsonFilter).Count()
+	return count
+}
+
+// Upsert ..
+func (h *handler) Upsert(ctx context.Context, params db.Params) error {
+	bsonFilter := bson.M{}
+	for key, val := range params.Filter {
+		bsonFilter[key] = val
+	}
+	params.UpsertData = map[string]interface{}{
+		"$set": params.UpsertData,
+	}
+	_, err := h.getDatabase(params.Database).C(params.Collection).Upsert(bsonFilter, params.UpsertData)
 	return err
 }
 
 // InsertOne ..
-func (h *handler) InsertOne(ctx context.Context, database, collection string, data interface{}) error {
-	return h.getDatabase(database).C(collection).Insert(data)
+func (h *handler) InsertOne(ctx context.Context, params db.Params) error {
+	return h.getDatabase(params.Database).C(params.Collection).Insert(params.UpsertData)
 }
