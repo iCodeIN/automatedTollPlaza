@@ -4,6 +4,7 @@ import (
 	// tollErr "automatedTollPlaze/pkg/errors"
 	"automatedTollPlaze/pkg/platform/appcontext"
 	"context"
+	"fmt"
 )
 
 //Service ..
@@ -25,6 +26,19 @@ func NewTollService(ctx context.Context, appCtx *appcontext.AppContext) Service 
 
 // IssueToll ..
 func (s *handler) IssueToll(ctx context.Context, ticket *TicketToll) error {
-	// return tollErr.NewErrorWithCode("ERR.PANIC.NOTFOUND", "not found")
-	return nil
+	filter := getFilters(ticket)
+	delete(filter, "ticketId")
+	project := make(map[string]interface{}, 0)
+	list := make([]map[string]interface{}, 0)
+	if err := s.AppCtx.DbClient.Find(ctx, "toll", "ticket", filter, project, list); err != nil {
+		return err
+	}
+	fmt.Println(list)
+	return s.AppCtx.DbClient.InsertOne(ctx, "toll", "tickets", ticket)
+}
+
+func getFilters(ticket *TicketToll) map[string]interface{} {
+	filter := make(map[string]interface{}, 0)
+
+	return filter
 }

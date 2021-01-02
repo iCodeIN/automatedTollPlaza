@@ -4,23 +4,20 @@ import (
 	"context"
 	"testing"
 
-	mgo "go.mongodb.org/mongo-driver/mongo"
-
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"github.com/globalsign/mgo"
 )
 
 type mockMongoHandler struct {
-	PingFn     func(ctx context.Context, rp *readpref.ReadPref) error
-	DatabaseFn func(name string, opts ...*options.DatabaseOptions) *mgo.Database
+	PingFn func() error
+	DBFn   func(name string) *mgo.Database
 }
 
-func (m mockMongoHandler) Ping(ctx context.Context, rp *readpref.ReadPref) error {
-	return m.PingFn(ctx, rp)
+func (m mockMongoHandler) Ping() error {
+	return m.PingFn()
 }
 
-func (m mockMongoHandler) Database(name string, opts ...*options.DatabaseOptions) *mgo.Database {
-	return m.DatabaseFn(name, opts...)
+func (m mockMongoHandler) DB(name string) *mgo.Database {
+	return m.DBFn(name)
 }
 
 func Test_handler_Health(t *testing.T) {
@@ -40,7 +37,7 @@ func Test_handler_Health(t *testing.T) {
 			name: "Success",
 			fields: fields{
 				dbClient: mockMongoHandler{
-					PingFn: func(ctx context.Context, rp *readpref.ReadPref) error {
+					PingFn: func() error {
 						return nil
 					},
 				},

@@ -3,10 +3,9 @@ package mongo
 import (
 	"automatedTollPlaze/pkg/platform/db"
 	"context"
+	"time"
 
-	mgo "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"github.com/globalsign/mgo"
 )
 
 // handler ..
@@ -15,8 +14,8 @@ type handler struct {
 }
 
 type client interface {
-	Ping(ctx context.Context, rp *readpref.ReadPref) error
-	Database(name string, opts ...*options.DatabaseOptions) *mgo.Database
+	Ping() error
+	DB(name string) *mgo.Database
 }
 
 // Cfg ..
@@ -26,7 +25,7 @@ type Cfg struct {
 
 // NewMongoClient ..
 func NewMongoClient(ctx context.Context, cfg Cfg) db.Service {
-	mgoClient, err := mgo.Connect(ctx, options.Client().ApplyURI(cfg.Host))
+	mgoClient, err := mgo.DialWithTimeout(cfg.Host, time.Duration(5)*time.Second)
 	if err != nil {
 		panic(err)
 	}
@@ -37,32 +36,29 @@ func NewMongoClient(ctx context.Context, cfg Cfg) db.Service {
 
 // getDatabase ..
 func (h *handler) getDatabase(dbName string) *mgo.Database {
-	return h.dbClient.Database(dbName)
+	return h.dbClient.DB(dbName)
 }
 
 // Health ..
 func (h *handler) Health(ctx context.Context) error {
-	return h.dbClient.Ping(ctx, readpref.Primary())
+	return h.dbClient.Ping()
 }
 
 // Find ..
 func (h *handler) Find(ctx context.Context, database, collection string, filter map[string]interface{}, projection map[string]interface{}, result interface{}) error {
-	opts := options.Find()
-	opts.Projection = projection
-	cursor, err := h.getDatabase(database).Collection(collection).Find(ctx, filter, options.Find(), opts)
-	if err != nil {
-		return err
-	}
-	return cursor.All(ctx, &result)
+	return h.getDatabase(database).C(collection).Find(filter).All(&result)
 }
 
 // UpsertMany ..
-func (h *handler) UpsertMany(ctx context.Context, database, collection string, filter map[string]interface{}, updateData map[string]interface{}, upsert bool) error {
-	opts := options.Update()
-	opts.SetUpsert(upsert)
+func (h *handler) UpsertMany(ctx context.Context, database, collection string, filter map[string]interface{}, updateData interface{}, upsert bool) error {
 	updateData = map[string]interface{}{
 		"$set": updateData,
 	}
-	_, err := h.getDatabase(database).Collection(collection).UpdateMany(ctx, filter, updateData, opts)
+	_, err := h.getDatabase(database).C(collection).Upsert(filter, updateData)
 	return err
+}
+
+// InsertOne ..
+func (h *handler) InsertOne(ctx context.Context, database, collection string, data interface{}) error {
+	return h.getDatabase(database).C(collection).Insert(data)
 }

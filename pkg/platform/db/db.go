@@ -8,6 +8,7 @@ import (
 // this package
 type Service interface {
 	Health(ctx context.Context) error
+	InsertOne(ctx context.Context, database, collection string, data interface{}) error
 	Find(ctx context.Context, database, collection string, filter map[string]interface{}, projection map[string]interface{}, result interface{}) error
-	UpsertMany(ctx context.Context, database, collection string, filter map[string]interface{}, updateData map[string]interface{}, upsert bool) error
+	UpsertMany(ctx context.Context, database, collection string, filter map[string]interface{}, updateData interface{}, upsert bool) error
 }
