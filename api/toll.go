@@ -74,6 +74,19 @@ func (api *API) getTicketDetails(w http.ResponseWriter, r *http.Request) {
 	webgo.R200(w, tollTicketData)
 }
 
+// redeemTollTicket ..
+func (api *API) redeemTollTicket(w http.ResponseWriter, r *http.Request) {
+	params := webgo.Context(r).Params()
+	ticket := &toll.TicketToll{
+		TicketID: params["ticketId"],
+	}
+	tollTicketData, err := api.Handler.TollHandler.RedeemTollTicket(r.Context(), ticket)
+	if err != nil {
+		webgo.R400(w, err)
+	}
+	webgo.R200(w, tollTicketData)
+}
+
 // getPagination ..
 func getPagination(r *http.Request) (int, int) {
 	start := 0

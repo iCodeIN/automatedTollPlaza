@@ -19,6 +19,7 @@ type Service interface {
 	GetTollTicketDetails(ctx context.Context, ticket *TicketToll) (*TicketToll, error)
 	GetTicketIssueList(ctx context.Context, params *TicketListRequest) TicketListResponse
 	IssueTollTicket(ctx context.Context, ticket *TicketToll) error
+	RedeemTollTicket(ctx context.Context, ticket *TicketToll) (*TicketToll, error)
 }
 
 // service ..
@@ -136,11 +137,23 @@ func (s *handler) RedeemTollTicket(ctx context.Context, ticket *TicketToll) (*Ti
 			err = ErrInvalidTollTicket
 		}
 		log.Error(err)
-		return nil, err
+		return nil, errors.ToTollError(err)
 	}
 	if ticket.Status == "REDEEMED" {
 		log.Error(ErrAlreadyRedeemed)
 		return nil, ErrAlreadyRedeemed
 	}
-	return nil, nil
+	ticket.Status = "REDEEMED"
+	ticket.UpdatedTimeStamp = time.Now().UTC()
+	dbParams = db.Params{
+		Database:   "toll",
+		Collection: "tickets",
+		Filter:     filter,
+		Result:     ticket,
+	}
+	if err := s.AppCtx.DbClient.Upsert(ctx, dbParams); err != nil {
+		log.Error(err)
+		return nil, errors.ToTollError(err)
+	}
+	return ticket, nil
 }

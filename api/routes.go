@@ -84,6 +84,14 @@ func (api *API) Routes() []*webgo.Route {
 			},
 		},
 		{
+			Name:    "Redeem Toll Ticket",
+			Method:  http.MethodPatch,
+			Pattern: "/tickets/:ticketId",
+			Handlers: []http.HandlerFunc{
+				api.redeemTollTicket,
+			},
+		},
+		{
 			Name:    "Home",
 			Method:  http.MethodGet,
 			Pattern: "/",
