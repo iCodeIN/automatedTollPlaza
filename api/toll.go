@@ -4,7 +4,10 @@ import (
 	"automatedTollPlaze/pkg/errors"
 	"automatedTollPlaze/pkg/toll"
 	"encoding/json"
+	"math/rand"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/bnkamalesh/webgo/v4"
 	"github.com/go-playground/validator/v10"
@@ -13,7 +16,8 @@ import (
 // Home ..
 func (api *API) Home(w http.ResponseWriter, r *http.Request) {
 	home := map[string]string{
-		"message": "Welcome to Automated Toll Plaza",
+		"startTime": api.AppContext.StartTime.String(),
+		"message":   "Welcome to Automated Toll Plaza",
 	}
 	webgo.R200(w, home)
 }
@@ -21,9 +25,13 @@ func (api *API) Home(w http.ResponseWriter, r *http.Request) {
 // Health ..
 func (api *API) Health(w http.ResponseWriter, r *http.Request) {
 	healthResponse := struct {
-		Database bool `json:"database"`
+		StartTime  string                 `json:"startTime"`
+		Dependency map[string]interface{} `json:"dependency"`
 	}{
-		Database: api.AppContext.DbClient.Health(r.Context()) == nil,
+		StartTime: api.AppContext.StartTime.String(),
+		Dependency: map[string]interface{}{
+			"database": api.AppContext.DbClient.Health(r.Context()) == nil,
+		},
 	}
 	webgo.R200(w, healthResponse)
 }
@@ -40,14 +48,24 @@ func (api *API) issueTollTicket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := validator.New().Struct(requestData); err != nil {
-		webgo.R400(w, err)
+		webgo.R400(w, errors.ErrMissingFields)
 		return
 	}
-	err := api.Handler.TollHandler.IssueToll(r.Context())
+	requestData.TicketID = func() string {
+		id := rand.NewSource(time.Now().UnixNano())
+		return requestData.TollID + "-" + strconv.Itoa(int(id.Int63()))
+	}()
+	requestData.Price = func() float64 {
+		price := 100.0
+		if requestData.ReturnTollTicket {
+			price = 200.0
+		}
+		return price
+	}()
+	err := api.Handler.TollHandler.IssueToll(r.Context(), &requestData)
 	if err != nil {
 		webgo.R400(w, err)
 		return
 	}
-	// data.Issused = err == nil
-	// webgo.R200(w, data)
+	webgo.R200(w, requestData)
 }

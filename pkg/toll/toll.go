@@ -8,7 +8,7 @@ import (
 
 //Service ..
 type Service interface {
-	IssueToll(context.Context) error
+	IssueToll(ctx context.Context, ticket *TicketToll) error
 }
 
 // service ..
@@ -24,7 +24,7 @@ func NewTollService(ctx context.Context, appCtx *appcontext.AppContext) Service 
 }
 
 // IssueToll ..
-func (s *handler) IssueToll(ctx context.Context) error {
+func (s *handler) IssueToll(ctx context.Context, ticket *TicketToll) error {
 	// return tollErr.NewErrorWithCode("ERR.PANIC.NOTFOUND", "not found")
 	return nil
 }

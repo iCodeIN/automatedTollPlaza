@@ -25,4 +25,10 @@ var (
 		"ERR.HTTP.UNPROCESSABLEENTITY",
 		"Invalid Json",
 	)
+
+	// ErrMissingFields ...
+	ErrMissingFields = NewErrorWithCode(
+		"ERR.APP.MISSING_FIELDS",
+		"There are some missing fields that are required",
+	)
 )

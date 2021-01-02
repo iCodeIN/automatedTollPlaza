@@ -1,8 +1,12 @@
 package appcontext
 
-import "automatedTollPlaze/pkg/platform/db"
+import (
+	"automatedTollPlaze/pkg/platform/db"
+	"time"
+)
 
 // AppContext ..
 type AppContext struct {
-	DbClient db.Service
+	DbClient  db.Service
+	StartTime time.Time
 }

@@ -36,6 +36,7 @@ func main() {
 		DbClient: mongo.NewMongoClient(ctx, mongo.Cfg{
 			Host: initCfg.MongoConfig.Host,
 		}),
+		StartTime: time.Now().Local(),
 	}
 	apiHandler := api.API{
 		AppContext: appCtx,
