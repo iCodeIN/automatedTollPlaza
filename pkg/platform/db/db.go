@@ -1,6 +1,7 @@
 package db
 
 import (
+	"automatedTollPlaze/pkg/errors"
 	"context"
 )
 
@@ -29,3 +30,11 @@ type Service interface {
 	Count(ctx context.Context, params Params) int
 	Upsert(ctx context.Context, params Params) error
 }
+
+var (
+	// ErrNotFound ..
+	ErrNotFound = errors.NewErrorWithCode(
+		"ERR.DB.NOT_FOUND",
+		"Content doesn't exists",
+	)
+)

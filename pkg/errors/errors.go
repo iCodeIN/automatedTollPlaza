@@ -24,9 +24,9 @@ func ToTollError(err error) *TollErr {
 	if err == nil {
 		return nil
 	}
-	appErr, ok := err.(*TollErr)
+	appErr, ok := err.(TollErr)
 	if ok {
-		return appErr
+		return &appErr
 	}
 	return &TollErr{
 		Code:    "ERR",

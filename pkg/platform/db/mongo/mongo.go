@@ -51,7 +51,10 @@ func (h *handler) FindOne(ctx context.Context, param db.Params) error {
 	for key, val := range param.Filter {
 		bsonFilter[key] = val
 	}
-	if err := h.getDatabase(param.Database).C(param.Collection).Find(bsonFilter).One(param.Result); err != nil && err != mgo.ErrNotFound {
+	if err := h.getDatabase(param.Database).C(param.Collection).Find(bsonFilter).One(param.Result); err != nil {
+		if err == mgo.ErrNotFound {
+			err = db.ErrNotFound
+		}
 		return err
 	}
 	return nil

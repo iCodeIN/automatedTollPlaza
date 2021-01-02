@@ -13,6 +13,7 @@ import (
 
 //Service ..
 type Service interface {
+	GetTicketDetails(ctx context.Context, ticket *TicketToll) (*TicketToll, error)
 	GetTicketIssueList(ctx context.Context, params *TicketListRequest) TicketListResponse
 	IssueToll(ctx context.Context, ticket *TicketToll) error
 }
@@ -31,16 +32,16 @@ func NewTollService(ctx context.Context, appCtx *appcontext.AppContext) Service 
 
 // IssueToll ..
 func (s *handler) IssueToll(ctx context.Context, ticket *TicketToll) error {
-	filter := newTicketFilter(ticket).setRegistrationNoFilter().setTollIDFilter().filter
-	dbParams := db.Params{
-		Database:   "toll",
-		Collection: "tickets",
-		Filter:     filter,
-		Result:     &TicketToll{},
-	}
-	if err := s.AppCtx.DbClient.FindOne(ctx, dbParams); err != nil {
-		return errors.ToTollError(err)
-	}
+	// filter := newTicketFilter(ticket).setRegistrationNoFilter().setTollIDFilter().filter
+	// dbParams := db.Params{
+	// 	Database:   "toll",
+	// 	Collection: "tickets",
+	// 	Filter:     filter,
+	// 	Result:     &TicketToll{},
+	// }
+	// if err := s.AppCtx.DbClient.FindOne(ctx, dbParams); err != nil {
+	// 	return errors.ToTollError(err)
+	// }
 	ticket.TicketID = func() string {
 		id := rand.NewSource(time.Now().UnixNano())
 		return ticket.TollID + "-" + strconv.Itoa(int(id.Int63()))
@@ -97,4 +98,20 @@ func (s *handler) GetTicketIssueList(ctx context.Context, params *TicketListRequ
 		Limit: params.Limit,
 	}
 	return list
+}
+
+// GetTicketIssueList ..
+func (s *handler) GetTicketDetails(ctx context.Context, ticket *TicketToll) (*TicketToll, error) {
+	filter := newTicketFilter(ticket).setTicketIDFilter().filter
+	dbTicket := &TicketToll{}
+	dbParams := db.Params{
+		Database:   "toll",
+		Collection: "tickets",
+		Filter:     filter,
+		Result:     dbTicket,
+	}
+	if err := s.AppCtx.DbClient.FindOne(ctx, dbParams); err != nil {
+		return nil, errors.ToTollError(err)
+	}
+	return dbTicket, nil
 }

@@ -45,11 +45,19 @@ func (api *API) Routes() []*webgo.Route {
 			},
 		},
 		{
-			Name:    "list ticket based on tollId, registration number and/or status",
+			Name:    "List Ticket based on tollId, registration number and/or status",
 			Method:  http.MethodGet,
 			Pattern: "/tickets/issued",
 			Handlers: []http.HandlerFunc{
 				api.getTicketIssueList,
+			},
+		},
+		{
+			Name:    "Get Ticket Details",
+			Method:  http.MethodGet,
+			Pattern: "/tickets/:ticketId",
+			Handlers: []http.HandlerFunc{
+				api.getTicketDetails,
 			},
 		},
 		{
