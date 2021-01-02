@@ -45,7 +45,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"ticketId\": \"\",\n    \"tollId\": \"1\",\n    \"vehicleRegistrationNo\": \"KA 01 AB 1234\",\n    \"twoWayToll\": false,\n    \"status\": \"ISSED\"\n}",
+					"raw": "{\n    \"ticketId\": \"\",\n    \"tollId\": \"2\",\n    \"vehicleRegistrationNo\": \"KA 01 AB 1235\",\n    \"twoWayToll\": true,\n    \"status\": \"ISSUED\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -71,7 +71,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost/tickets/issued?tollId=&registrationNo=KA 01 AB 1234&status=REDEEMED&limit=1",
+					"raw": "http://localhost/tickets/issued?tollId=&registrationNo=KA 01 AB 1235&status=ISSUED&limit=",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -87,15 +87,15 @@
 						},
 						{
 							"key": "registrationNo",
-							"value": "KA 01 AB 1234"
+							"value": "KA 01 AB 1235"
 						},
 						{
 							"key": "status",
-							"value": "REDEEMED"
+							"value": "ISSUED"
 						},
 						{
 							"key": "limit",
-							"value": "1"
+							"value": ""
 						}
 					]
 				}

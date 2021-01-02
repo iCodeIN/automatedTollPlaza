@@ -15,7 +15,7 @@ func newTicketFilter(ticket *TicketToll) filterMap {
 
 // setRegistrationNoFilter ..
 func (f filterMap) setRegistrationNoFilter() filterMap {
-	if f.ticket != nil {
+	if f.ticket != nil && len(f.ticket.RegistrationNo) > 0 {
 		f.filter["vehicleRegistrationNo"] = f.ticket.RegistrationNo
 	}
 	return f
@@ -23,7 +23,7 @@ func (f filterMap) setRegistrationNoFilter() filterMap {
 
 // setTicketIDFilter ..
 func (f filterMap) setTicketIDFilter() filterMap {
-	if f.ticket != nil {
+	if f.ticket != nil && len(f.ticket.TicketID) > 0 {
 		f.filter["ticketId"] = f.ticket.TicketID
 	}
 	return f
@@ -31,8 +31,16 @@ func (f filterMap) setTicketIDFilter() filterMap {
 
 // setTollIDFilter ..
 func (f filterMap) setTollIDFilter() filterMap {
-	if f.ticket != nil {
+	if f.ticket != nil && len(f.ticket.TollID) > 0 {
 		f.filter["tollId"] = f.ticket.TollID
+	}
+	return f
+}
+
+// setStatusFilter ..
+func (f filterMap) setStatusFilter() filterMap {
+	if f.ticket != nil && len(f.ticket.Status) > 0 {
+		f.filter["status"] = f.ticket.Status
 	}
 	return f
 }

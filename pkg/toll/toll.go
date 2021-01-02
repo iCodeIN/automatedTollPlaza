@@ -9,6 +9,8 @@ import (
 	"math/rand"
 	"strconv"
 	"time"
+
+	"github.com/jinzhu/copier"
 )
 
 //Service ..
@@ -32,7 +34,7 @@ func NewTollService(ctx context.Context, appCtx *appcontext.AppContext) Service 
 
 // IssueToll ..
 func (s *handler) IssueToll(ctx context.Context, ticket *TicketToll) error {
-	// filter := newTicketFilter(ticket).setRegistrationNoFilter().setTollIDFilter().filter
+	// filter := newTicketFilter(ticket).setRegistrationNoFilter().setTollIDFilter().getFilter()
 	// dbParams := db.Params{
 	// 	Database:   "toll",
 	// 	Collection: "tickets",
@@ -69,16 +71,9 @@ func (s *handler) IssueToll(ctx context.Context, ticket *TicketToll) error {
 
 // GetTicketIssueList ..
 func (s *handler) GetTicketIssueList(ctx context.Context, params *TicketListRequest) TicketListResponse {
-	filter := make(map[string]interface{}, 0)
-	if len(params.RegistrationNo) > 0 {
-		filter["vehicleRegistrationNo"] = params.RegistrationNo
-	}
-	if len(params.TollID) > 0 {
-		filter["tollId"] = params.TollID
-	}
-	if len(params.Status) > 0 {
-		filter["status"] = params.Status
-	}
+	ticket := &TicketToll{}
+	copier.Copy(ticket, params)
+	filter := newTicketFilter(ticket).setRegistrationNoFilter().setTollIDFilter().setStatusFilter().getFilter()
 	ticketList := make([]TicketToll, 0)
 	dbParams := db.Params{
 		Database:   "toll",

@@ -19,6 +19,9 @@ github.com/go-playground/universal-translator
 # github.com/go-playground/validator/v10 v10.4.1
 ## explicit
 github.com/go-playground/validator/v10
+# github.com/jinzhu/copier v0.1.0
+## explicit
+github.com/jinzhu/copier
 # github.com/kr/pretty v0.1.0
 ## explicit
 # github.com/leodido/go-urn v1.2.0
