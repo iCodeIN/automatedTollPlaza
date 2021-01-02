@@ -108,14 +108,33 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost/tickets/1-6855496268439824551",
+					"raw": "http://localhost/tickets/27183596345597762960",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"path": [
 						"tickets",
-						"1-6855496268439824551"
+						"27183596345597762960"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Redeem Toll Ticket",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/tickets/27183596345597762960",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"tickets",
+						"27183596345597762960"
 					]
 				}
 			},

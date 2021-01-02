@@ -53,10 +53,12 @@ func (s *handler) IssueTollTicket(ctx context.Context, ticket *TicketToll) error
 		log.Error(ErrPendingTollTickets)
 		return ErrPendingTollTickets
 	}
+
 	ticket.TicketID = func() string {
 		id := rand.NewSource(time.Now().UnixNano())
 		return ticket.TollID + strconv.Itoa(int(id.Int63()))
 	}()
+
 	ticket.Price = func() float64 {
 		price := 200.0
 		if !ticket.ReturnTollTicket {
@@ -65,6 +67,7 @@ func (s *handler) IssueTollTicket(ctx context.Context, ticket *TicketToll) error
 		}
 		return price
 	}()
+
 	ticket.IssuedTimeStamp = time.Now().UTC()
 	ticket.UpdatedTimeStamp = time.Now().UTC()
 	params := db.Params{
@@ -149,7 +152,7 @@ func (s *handler) RedeemTollTicket(ctx context.Context, ticket *TicketToll) (*Ti
 		Database:   "toll",
 		Collection: "tickets",
 		Filter:     filter,
-		Result:     ticket,
+		UpsertData: ticket,
 	}
 	if err := s.AppCtx.DbClient.Upsert(ctx, dbParams); err != nil {
 		log.Error(err)
