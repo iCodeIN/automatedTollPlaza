@@ -1,4 +1,5 @@
 {
+    "httpLog": true,
     "serverConfig": {
         "host": "",
         "port": "80",

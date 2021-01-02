@@ -9,7 +9,6 @@ import (
 	"automatedTollPlaze/pkg/toll"
 	"automatedTollPlaze/utils"
 	"context"
-	"fmt"
 	"os"
 	"time"
 
@@ -33,7 +32,6 @@ func main() {
 	if err := utils.ReadFile(mydir+"/config/config.json", utils.FileData{Data: initCfg}); err != nil {
 		panic(err)
 	}
-	fmt.Println(initCfg)
 	appCtx := &appcontext.AppContext{
 		DbClient: mongo.NewMongoClient(ctx, mongo.Cfg{
 			Host: initCfg.MongoConfig.Host,
@@ -57,6 +55,8 @@ func main() {
 		AppContext: appCtx,
 		server:     router,
 	}
-	router.Use(middleware.AccessLog)
+	if initCfg.HTTPLog {
+		router.Use(middleware.AccessLog)
+	}
 	httpServer.server.Start()
 }

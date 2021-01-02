@@ -4,6 +4,7 @@ import "time"
 
 // Cfg ..
 type Cfg struct {
+	HTTPLog      bool         `json:"httpLog"`
 	ServerConfig ServerConfig `json:"serverConfig"`
 	MongoConfig  MongoConfig  `json:"mongoConfig"`
 }
