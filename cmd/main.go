@@ -18,12 +18,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// HTTP represents structure of Http Requests
-type HTTP struct {
-	AppContext *appcontext.AppContext
-	server     *webgo.Router
-}
-
 func main() {
 	// setting logger
 	log.SetFormatter(&log.JSONFormatter{})
@@ -45,11 +39,8 @@ func main() {
 		}),
 		StartTime: time.Now().Local(),
 	}
-	apiHandler := api.API{
-		AppContext: appCtx,
-		Handler: pkg.ServiceHandler{
-			TollHandler: toll.NewTollService(ctx, appCtx),
-		},
+	apiHandler := pkg.ServiceHandler{
+		TollHandler: toll.NewTollService(ctx, appCtx),
 	}
 	cfg := &webgo.Config{
 		Host:         initCfg.ServerConfig.Host,
@@ -57,15 +48,16 @@ func main() {
 		ReadTimeout:  initCfg.ServerConfig.ReadTimeout * time.Second,
 		WriteTimeout: initCfg.ServerConfig.WriteTimeout * time.Second,
 	}
-	router := webgo.NewRouter(cfg, apiHandler.Routes())
-	router.NotFound = api.NotFound()
-	httpServer := &HTTP{
+	httpServer := &api.HTTP{
 		AppContext: appCtx,
-		server:     router,
+		APIHandler: &apiHandler,
 	}
+	httpServer.Server = webgo.NewRouter(cfg, httpServer.Routes())
+	httpServer.Server.NotFound = api.NotFound()
+
 	if initCfg.HTTPLog {
-		router.Use(middleware.AccessLog)
+		httpServer.Server.Use(middleware.AccessLog)
 	}
 	log.Info("Server has started on port ", initCfg.ServerConfig.Port)
-	httpServer.server.Start()
+	httpServer.Server.Start()
 }

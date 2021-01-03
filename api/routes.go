@@ -14,6 +14,13 @@ type API struct {
 	Handler    pkg.ServiceHandler
 }
 
+// HTTP represents structure of Http Requests
+type HTTP struct {
+	AppContext *appcontext.AppContext
+	APIHandler *pkg.ServiceHandler
+	Server     *webgo.Router
+}
+
 // NotFound NotFound is the 404 handler
 func NotFound() http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -26,37 +33,37 @@ func NotFound() http.HandlerFunc {
 }
 
 // Home ..
-func (api *API) Home(w http.ResponseWriter, r *http.Request) {
+func (h *HTTP) Home(w http.ResponseWriter, r *http.Request) {
 	home := map[string]string{
-		"startTime": api.AppContext.StartTime.String(),
+		"startTime": h.AppContext.StartTime.String(),
 		"message":   "Welcome to Automated Toll Plaza",
 	}
 	webgo.R200(w, home)
 }
 
 // Health ..
-func (api *API) Health(w http.ResponseWriter, r *http.Request) {
+func (h *HTTP) Health(w http.ResponseWriter, r *http.Request) {
 	healthResponse := struct {
 		StartTime  string                 `json:"startTime"`
 		Dependency map[string]interface{} `json:"dependency"`
 	}{
-		StartTime: api.AppContext.StartTime.String(),
+		StartTime: h.AppContext.StartTime.String(),
 		Dependency: map[string]interface{}{
-			"database": api.AppContext.DbClient.Health(r.Context()) == nil,
+			"database": h.AppContext.DbClient.Health(r.Context()) == nil,
 		},
 	}
 	webgo.R200(w, healthResponse)
 }
 
 // Routes ...
-func (api *API) Routes() []*webgo.Route {
+func (h *HTTP) Routes() []*webgo.Route {
 	return []*webgo.Route{
 		{
 			Name:    "health",
 			Method:  http.MethodGet,
 			Pattern: "/health",
 			Handlers: []http.HandlerFunc{
-				api.Health,
+				h.Health,
 			},
 		},
 		{
@@ -64,7 +71,7 @@ func (api *API) Routes() []*webgo.Route {
 			Method:  http.MethodPost,
 			Pattern: "/issue",
 			Handlers: []http.HandlerFunc{
-				api.issueTollTicket,
+				h.issueTollTicket,
 			},
 		},
 		{
@@ -72,7 +79,7 @@ func (api *API) Routes() []*webgo.Route {
 			Method:  http.MethodGet,
 			Pattern: "/tickets/issued",
 			Handlers: []http.HandlerFunc{
-				api.getTicketIssueList,
+				h.getTicketIssueList,
 			},
 		},
 		{
@@ -80,7 +87,7 @@ func (api *API) Routes() []*webgo.Route {
 			Method:  http.MethodGet,
 			Pattern: "/tickets/:ticketId",
 			Handlers: []http.HandlerFunc{
-				api.getTicketDetails,
+				h.getTicketDetails,
 			},
 		},
 		{
@@ -88,7 +95,7 @@ func (api *API) Routes() []*webgo.Route {
 			Method:  http.MethodPatch,
 			Pattern: "/tickets/:ticketId",
 			Handlers: []http.HandlerFunc{
-				api.redeemTollTicket,
+				h.redeemTollTicket,
 			},
 		},
 		{
@@ -96,7 +103,7 @@ func (api *API) Routes() []*webgo.Route {
 			Method:  http.MethodGet,
 			Pattern: "/",
 			Handlers: []http.HandlerFunc{
-				api.Home,
+				h.Home,
 			},
 		},
 	}

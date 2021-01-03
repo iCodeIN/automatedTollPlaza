@@ -14,7 +14,7 @@ import (
 )
 
 // issueTollTicket ..
-func (api *API) issueTollTicket(w http.ResponseWriter, r *http.Request) {
+func (h *HTTP) issueTollTicket(w http.ResponseWriter, r *http.Request) {
 	requestData := toll.TicketToll{}
 	if err := json.NewDecoder(r.Body).Decode(&requestData); err != nil {
 		log.Error(err)
@@ -30,7 +30,7 @@ func (api *API) issueTollTicket(w http.ResponseWriter, r *http.Request) {
 		webgo.R400(w, errors.ErrMissingFields)
 		return
 	}
-	err := api.Handler.TollHandler.IssueTollTicket(r.Context(), &requestData)
+	err := h.APIHandler.TollHandler.IssueTollTicket(r.Context(), &requestData)
 	if err != nil {
 		webgo.R400(w, err)
 		return
@@ -39,7 +39,7 @@ func (api *API) issueTollTicket(w http.ResponseWriter, r *http.Request) {
 }
 
 // getTicketIssueList ..
-func (api *API) getTicketIssueList(w http.ResponseWriter, r *http.Request) {
+func (h *HTTP) getTicketIssueList(w http.ResponseWriter, r *http.Request) {
 	params := toll.TicketListRequest{
 		TollID:         r.URL.Query().Get("tollId"),
 		RegistrationNo: r.URL.Query().Get("registrationNo"),
@@ -57,17 +57,17 @@ func (api *API) getTicketIssueList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	params.Start, params.Limit = getPagination(r)
-	list := api.Handler.TollHandler.GetTicketIssueList(r.Context(), &params)
+	list := h.APIHandler.TollHandler.GetTicketIssueList(r.Context(), &params)
 	webgo.R200(w, list)
 }
 
 // getTicketIssueList ..
-func (api *API) getTicketDetails(w http.ResponseWriter, r *http.Request) {
+func (h *HTTP) getTicketDetails(w http.ResponseWriter, r *http.Request) {
 	params := webgo.Context(r).Params()
 	ticket := &toll.TicketToll{
 		TicketID: params["ticketId"],
 	}
-	tollTicketData, err := api.Handler.TollHandler.GetTollTicketDetails(r.Context(), ticket)
+	tollTicketData, err := h.APIHandler.TollHandler.GetTollTicketDetails(r.Context(), ticket)
 	if err != nil {
 		webgo.R400(w, err)
 	}
@@ -75,12 +75,12 @@ func (api *API) getTicketDetails(w http.ResponseWriter, r *http.Request) {
 }
 
 // redeemTollTicket ..
-func (api *API) redeemTollTicket(w http.ResponseWriter, r *http.Request) {
+func (h *HTTP) redeemTollTicket(w http.ResponseWriter, r *http.Request) {
 	params := webgo.Context(r).Params()
 	ticket := &toll.TicketToll{
 		TicketID: params["ticketId"],
 	}
-	tollTicketData, err := api.Handler.TollHandler.RedeemTollTicket(r.Context(), ticket)
+	tollTicketData, err := h.APIHandler.TollHandler.RedeemTollTicket(r.Context(), ticket)
 	if err != nil {
 		webgo.R400(w, err)
 	}
