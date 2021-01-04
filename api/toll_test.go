@@ -124,7 +124,7 @@ func TestHTTP_home(t *testing.T) {
 			method:   http.MethodGet,
 			url:      "/",
 			code:     200,
-			expected: `{"data":{"message":"Welcome to Automated Toll Plaza","startTime":"0001-01-01 00:00:00 +0000 UTC"},"status":200}`,
+			expected: `{"data":{"message":"Welcome to Automated Toll Plaza","startTime":"0001-01-01T00:00:00Z"},"status":200}`,
 		},
 	}
 	server := mockHTTPServer()
@@ -172,7 +172,7 @@ func TestHTTP_health(t *testing.T) {
 			method:   http.MethodGet,
 			url:      "/health",
 			code:     200,
-			expected: `{"data":{"startTime":"0001-01-01 00:00:00 +0000 UTC","dependency":{"database":true}},"status":200}`,
+			expected: `{"data":{"startTime":"0001-01-01T00:00:00Z","dependency":{"database":true}},"status":200}`,
 		},
 	}
 	server := mockHTTPServer()

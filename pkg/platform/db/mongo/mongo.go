@@ -10,22 +10,23 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// handler ..
+// handler has mongoDB methods
 type handler struct {
 	dbClient client
 }
 
+// client models
 type client interface {
 	Ping() error
 	DB(name string) *mgo.Database
 }
 
-// Cfg ..
+// Cfg is mongodb configuration structure
 type Cfg struct {
 	Host string `json:"host"`
 }
 
-// NewMongoClient ..
+// NewMongoClient returns a new mongodb client
 func NewMongoClient(ctx context.Context, cfg Cfg) db.Service {
 	mgoClient, err := mgo.DialWithTimeout(cfg.Host, time.Duration(5)*time.Second)
 	if err != nil {
@@ -37,17 +38,17 @@ func NewMongoClient(ctx context.Context, cfg Cfg) db.Service {
 	}
 }
 
-// getDatabase ..
+// getDatabase returns a db instance
 func (h *handler) getDatabase(dbName string) *mgo.Database {
 	return h.dbClient.DB(dbName)
 }
 
-// Health ..
+// Health checks the health/connectivity with mongodb
 func (h *handler) Health(ctx context.Context) error {
 	return h.dbClient.Ping()
 }
 
-// FindOne ..
+// FindOne returns a single mongodb document for the provided filter
 func (h *handler) FindOne(ctx context.Context, param db.Params) error {
 	bsonFilter := bson.M{}
 	for key, val := range param.Filter {
@@ -62,7 +63,7 @@ func (h *handler) FindOne(ctx context.Context, param db.Params) error {
 	return nil
 }
 
-// FindAll ..
+// FindAll returns all mongodb document for the provided filter
 func (h *handler) FindAll(ctx context.Context, param db.Params) error {
 	bsonFilter := bson.M{}
 	for key, val := range param.Filter {
@@ -79,7 +80,7 @@ func (h *handler) FindAll(ctx context.Context, param db.Params) error {
 	return nil
 }
 
-// Count ..
+// Count returns a count of mongodb document for the provided filter
 func (h *handler) Count(ctx context.Context, params db.Params) int {
 	bsonFilter := bson.M{}
 	for key, val := range params.Filter {
@@ -89,7 +90,8 @@ func (h *handler) Count(ctx context.Context, params db.Params) int {
 	return count
 }
 
-// Upsert ..
+// Upsert updates a document with the updated data provided filter
+// if no document exists, a new documented is created with the same filter.
 func (h *handler) Upsert(ctx context.Context, params db.Params) error {
 	bsonFilter := bson.M{}
 	for key, val := range params.Filter {
@@ -102,7 +104,7 @@ func (h *handler) Upsert(ctx context.Context, params db.Params) error {
 	return err
 }
 
-// InsertOne ..
+// InsertOne inserts a new mongoDB document.
 func (h *handler) InsertOne(ctx context.Context, params db.Params) error {
 	return h.getDatabase(params.Database).C(params.Collection).Insert(params.UpsertData)
 }

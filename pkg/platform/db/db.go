@@ -5,7 +5,7 @@ import (
 	"context"
 )
 
-// Params ..
+// Params is necessary parameters for query the database
 type Params struct {
 	Database   string
 	Collection string
@@ -15,13 +15,12 @@ type Params struct {
 	Pagination *Paginate
 }
 
-// Paginate ..
+// Paginate is structure to definate pagination
 type Paginate struct {
 	Start, Limit int
 }
 
-// Service is the contract for all of the cache backends that are supported by
-// this package
+// Service is the contract for all of the cache backends that are supported by this package
 type Service interface {
 	Health(ctx context.Context) error
 	InsertOne(ctx context.Context, params Params) error
@@ -32,7 +31,7 @@ type Service interface {
 }
 
 var (
-	// ErrNotFound ..
+	// ErrNotFound is the error when data doesn't exists
 	ErrNotFound = errors.NewErrorWithCode(
 		"ERR.DB.NOT_FOUND",
 		"Content doesn't exists",

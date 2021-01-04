@@ -12,6 +12,7 @@ type TicketToll struct {
 	Status           string    `json:"status" validate:"required,oneof=ISSUED REDEEMED" bson:"status"`
 	Price            float64   `json:"TotalAmount,omitempty" bson:"TotalAmount"`
 	IssuedTimeStamp  time.Time `json:"issuedTimeStamp" bson:"issuedTimeStamp"`
+	RedeemBy         time.Time `json:"-" bson:"redeemBy"`
 	UpdatedTimeStamp time.Time `json:"updatedTimeStamp" bson:"updatedTimeStamp"`
 }
 

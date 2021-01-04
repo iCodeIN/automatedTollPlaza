@@ -4,11 +4,12 @@ import (
 	"automatedTollPlaze/pkg"
 	"automatedTollPlaze/pkg/platform/appcontext"
 	"net/http"
+	"time"
 
 	"github.com/bnkamalesh/webgo/v4"
 )
 
-// API ..
+// API model
 type API struct {
 	AppContext *appcontext.AppContext
 	Handler    pkg.ServiceHandler
@@ -32,22 +33,22 @@ func NotFound() http.HandlerFunc {
 	})
 }
 
-// Home ..
+// Home is a handler to serve home page request
 func (h *HTTP) Home(w http.ResponseWriter, r *http.Request) {
-	home := map[string]string{
-		"startTime": h.AppContext.StartTime.String(),
+	home := map[string]interface{}{
+		"startTime": h.AppContext.StartTime,
 		"message":   "Welcome to Automated Toll Plaza",
 	}
 	webgo.R200(w, home)
 }
 
-// Health ..
+// Health is a handler to check the health status of the application and dependencies
 func (h *HTTP) Health(w http.ResponseWriter, r *http.Request) {
 	healthResponse := struct {
-		StartTime  string                 `json:"startTime"`
+		StartTime  time.Time              `json:"startTime"`
 		Dependency map[string]interface{} `json:"dependency"`
 	}{
-		StartTime: h.AppContext.StartTime.String(),
+		StartTime: h.AppContext.StartTime,
 		Dependency: map[string]interface{}{
 			"database": h.AppContext.DbClient.Health(r.Context()) == nil,
 		},
@@ -55,11 +56,11 @@ func (h *HTTP) Health(w http.ResponseWriter, r *http.Request) {
 	webgo.R200(w, healthResponse)
 }
 
-// Routes ...
+// Routes initializes and returns the list of routes for our application
 func (h *HTTP) Routes() []*webgo.Route {
 	return []*webgo.Route{
 		{
-			Name:    "health",
+			Name:    "Health",
 			Method:  http.MethodGet,
 			Pattern: "/health",
 			Handlers: []http.HandlerFunc{

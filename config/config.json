@@ -7,7 +7,7 @@
         "writeTimeout": 60
     },
     "mongoConfig": {
-        "host": "tollPlaza-mongo"
+        "host": "mongodb://localhost:27017"
     },
     "pricing": {
         "default": {
