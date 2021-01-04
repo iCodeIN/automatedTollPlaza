@@ -417,7 +417,9 @@ func Test_handler_RedeemTollTicket(t *testing.T) {
 				dbHandler: mockDBHandler{
 					FindOneFn: func(ctx context.Context, params db.Params) error {
 						if val, ok := params.Result.(*TicketToll); ok {
+							t := time.Now().Add(time.Hour * 24)
 							val.TicketID = "1"
+							val.RedeemBy = time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
 							val.Status = "ISSUED"
 						}
 						return nil
@@ -445,6 +447,7 @@ func Test_handler_RedeemTollTicket(t *testing.T) {
 			}
 			if got != nil {
 				got.IssuedTimeStamp = time.Time{}
+				got.RedeemBy = time.Time{}
 				got.UpdatedTimeStamp = time.Time{}
 			}
 			if !reflect.DeepEqual(got, tt.want) {

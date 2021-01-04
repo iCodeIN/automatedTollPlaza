@@ -206,7 +206,7 @@ func (s *handler) RedeemTollTicket(ctx context.Context, ticket *TicketToll) (*Ti
 	}
 
 	// checking the redemption time is valid or not.
-	if ticket.RedeemBy.After(time.Now().UTC()) {
+	if time.Now().UTC().After(ticket.RedeemBy) {
 		log.Warn("Redemption time has past. Charging double penality.")
 		ticket.Price = ticket.Price * 2
 	}
