@@ -7,8 +7,9 @@ import (
 	"automatedTollPlaze/pkg/platform/appcontext"
 	"automatedTollPlaze/pkg/platform/db/mongo"
 	"automatedTollPlaze/pkg/toll"
-	"automatedTollPlaze/utils"
 	"context"
+	"encoding/json"
+	"io/ioutil"
 	"os"
 	"time"
 
@@ -28,10 +29,17 @@ func main() {
 	mydir, err := os.Getwd()
 	if err != nil {
 		log.Panic(err)
+		return
+	}
+	byt, err := ioutil.ReadFile(mydir + "/config/config.json")
+	if err != nil {
+		log.Panic(err)
+		return
 	}
 	initCfg := config.Cfg{}
-	if err := utils.ReadFile(mydir+"/config/config.json", utils.FileData{Data: &initCfg}); err != nil {
+	if err := json.Unmarshal(byt, &initCfg); err != nil {
 		log.Panic(err)
+		return
 	}
 	appCtx := &appcontext.AppContext{
 		DbClient: mongo.NewMongoClient(ctx, mongo.Cfg{
