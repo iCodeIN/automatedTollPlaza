@@ -6,6 +6,7 @@ import "time"
 type TicketToll struct {
 	TicketID         string    `json:"ticketId,omitempty" bson:"ticketId"`
 	TollID           string    `json:"tollId" validate:"required" bson:"tollId"`
+	VehicleType      string    `json:"vehicleType" validate:"required,oneof=light moderate heavy" bson:"vehicleType"`
 	RegistrationNo   string    `json:"vehicleRegistrationNo" validate:"required" bson:"vehicleRegistrationNo"`
 	ReturnTollTicket bool      `json:"twoWayToll" bson:"twoWayToll"`
 	Status           string    `json:"status" validate:"required,oneof=ISSUED REDEEMED" bson:"status"`

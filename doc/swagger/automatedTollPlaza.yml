@@ -109,6 +109,7 @@ paths:
                         - ticketId: 2-9047734346961988574
                           tollId: '2'
                           vehicleRegistrationNo: KA 01 AB 1235
+                          vehicleType: light
                           twoWayToll: true
                           status: REDEEMED
                           TotalAmount: 200
@@ -117,6 +118,7 @@ paths:
                         - ticketId: '26034924088790976215'
                           tollId: '2'
                           vehicleRegistrationNo: KA 01 AB 1235
+                          vehicleType: light
                           twoWayToll: true
                           status: REDEEMED
                           TotalAmount: 200
@@ -125,6 +127,7 @@ paths:
                         - ticketId: '22864073505826295840'
                           tollId: '2'
                           vehicleRegistrationNo: KA 01 AB 1235
+                          vehicleType: light
                           twoWayToll: true
                           status: REDEEMED
                           TotalAmount: 200
@@ -133,6 +136,7 @@ paths:
                         - ticketId: '26634255005550188200'
                           tollId: '2'
                           vehicleRegistrationNo: KA 01 AB 1235
+                          vehicleType: light
                           twoWayToll: false
                           status: REDEEMED
                           TotalAmount: 100
@@ -141,6 +145,7 @@ paths:
                         - ticketId: '21235529390055539447'
                           tollId: '2'
                           vehicleRegistrationNo: KA 01 AB 1235
+                          vehicleType: light
                           twoWayToll: false
                           status: REDEEMED
                           TotalAmount: 100
@@ -149,6 +154,7 @@ paths:
                         - ticketId: '27183596345597762960'
                           tollId: '2'
                           vehicleRegistrationNo: KA 01 AB 1235
+                          vehicleType: light
                           twoWayToll: true
                           status: REDEEMED
                           TotalAmount: 200
@@ -157,6 +163,7 @@ paths:
                         - ticketId: '2104929374906137784'
                           tollId: '2'
                           vehicleRegistrationNo: KA 01 AB 1235
+                          vehicleType: light
                           twoWayToll: true
                           status: REDEEMED
                           TotalAmount: 200
@@ -179,6 +186,7 @@ paths:
               example:
                 tollId: '2'
                 vehicleRegistrationNo: KA 01 AB 1235
+                vehicleType: light
                 twoWayToll: true
                 status: ISSUED
       responses:
@@ -198,6 +206,7 @@ paths:
                       ticketId: '28611936925559614836'
                       tollId: '2'
                       vehicleRegistrationNo: KA 01 AB 1235
+                      vehicleType: light
                       twoWayToll: true
                       status: ISSUED
                       TotalAmount: 200
@@ -232,6 +241,7 @@ paths:
                       ticketId: '28611936925559614836'
                       tollId: '2'
                       vehicleRegistrationNo: KA 01 AB 1235
+                      vehicleType: light
                       twoWayToll: true
                       status: ISSUED
                       TotalAmount: 200
@@ -265,6 +275,7 @@ paths:
                       ticketId: '28611936925559614836'
                       tollId: '2'
                       vehicleRegistrationNo: KA 01 AB 1235
+                      vehicleType: light
                       twoWayToll: true
                       status: REDEEMED
                       TotalAmount: 200

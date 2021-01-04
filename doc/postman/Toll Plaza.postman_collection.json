@@ -45,7 +45,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"ticketId\": \"\",\n    \"tollId\": \"2\",\n    \"vehicleRegistrationNo\": \"KA 01 AB 1235\",\n    \"twoWayToll\": true,\n    \"status\": \"ISSUED\"\n}",
+					"raw": "{\n    \"vehicleType\": \"heavy\",\n    \"tollId\": \"2\",\n    \"vehicleRegistrationNo\": \"KA 01 AB 1239\",\n    \"twoWayToll\": true,\n    \"status\": \"ISSUED\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -72,7 +72,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost/tickets?tollId=&registrationNo=KA 01 AB 1235&status=REDEEMED&limit=",
+					"raw": "http://localhost/tickets?tollId=2&registrationNo=&status=&limit=",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -83,15 +83,15 @@
 					"query": [
 						{
 							"key": "tollId",
-							"value": ""
+							"value": "2"
 						},
 						{
 							"key": "registrationNo",
-							"value": "KA 01 AB 1235"
+							"value": ""
 						},
 						{
 							"key": "status",
-							"value": "REDEEMED"
+							"value": ""
 						},
 						{
 							"key": "limit",
@@ -108,14 +108,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost/tickets/27412469639138786747",
+					"raw": "http://localhost/tickets/22799639795569940809",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"path": [
 						"tickets",
-						"27412469639138786747"
+						"22799639795569940809"
 					]
 				}
 			},
@@ -127,14 +127,14 @@
 				"method": "PATCH",
 				"header": [],
 				"url": {
-					"raw": "http://localhost/tickets/27412469639138786747",
+					"raw": "http://localhost/tickets/22799639795569940809",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"path": [
 						"tickets",
-						"27412469639138786747"
+						"22799639795569940809"
 					]
 				}
 			},

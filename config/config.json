@@ -8,5 +8,25 @@
     },
     "mongoConfig": {
         "host": "tollPlaza-mongo"
+    },
+    "pricing": {
+        "default": {
+            "oneWay":100,
+            "twoWay": 200
+        },
+        "vehicleType": {
+            "light": {
+                "oneWay":100,
+                "twoWay": 200
+            },
+            "moderate": {
+                "oneWay":100,
+                "twoWay": 200
+            },
+            "heavy": {
+                "oneWay":100,
+                "twoWay": 200
+            }
+        }
     }
 }

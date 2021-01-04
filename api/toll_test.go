@@ -244,7 +244,7 @@ func TestHTTP_issueTollTicket(t *testing.T) {
 			name:   "Pending toll tickets",
 			method: http.MethodPost,
 			url:    basePath,
-			body:   `{"ticketId":"","tollId":"2","vehicleRegistrationNo":"KA 01 AB 1235","twoWayToll":true,"status":"ISSUED"}`,
+			body:   `{"ticketId":"","tollId":"2","vehicleRegistrationNo":"KA 01 AB 1235","vehicleType":"light","twoWayToll":true,"status":"ISSUED"}`,
 			apiServices: &pkg.ServiceHandler{
 				TollHandler: mockHandler{
 					IssueTollTicketFn: func(ctx context.Context, ticket *toll.TicketToll) error {
@@ -259,7 +259,7 @@ func TestHTTP_issueTollTicket(t *testing.T) {
 			name:   "Successfully Issued toll",
 			method: http.MethodPost,
 			url:    basePath,
-			body:   `{"ticketId":"","tollId":"2","vehicleRegistrationNo":"KA 01 AB 1235","twoWayToll":true,"status":"ISSUED"}`,
+			body:   `{"ticketId":"","tollId":"2","vehicleRegistrationNo":"KA 01 AB 1235","vehicleType":"light","twoWayToll":true,"status":"ISSUED"}`,
 			apiServices: &pkg.ServiceHandler{
 				TollHandler: mockHandler{
 					IssueTollTicketFn: func(ctx context.Context, ticket *toll.TicketToll) error {
@@ -268,7 +268,7 @@ func TestHTTP_issueTollTicket(t *testing.T) {
 				},
 			},
 			code:     200,
-			expected: `{"data":{"tollId":"2","vehicleRegistrationNo":"KA 01 AB 1235","twoWayToll":true,"status":"ISSUED","issuedTimeStamp":"0001-01-01T00:00:00Z","updatedTimeStamp":"0001-01-01T00:00:00Z"},"status":200}`,
+			expected: `{"data":{"tollId":"2","vehicleType":"light","vehicleRegistrationNo":"KA 01 AB 1235","twoWayToll":true,"status":"ISSUED","issuedTimeStamp":"0001-01-01T00:00:00Z","updatedTimeStamp":"0001-01-01T00:00:00Z"},"status":200}`,
 		},
 	}
 	server := mockHTTPServer()
@@ -414,7 +414,7 @@ func TestHTTP_getTicketDetails(t *testing.T) {
 				},
 			},
 			code:     200,
-			expected: `{"data":{"tollId":"","vehicleRegistrationNo":"","twoWayToll":false,"status":"","issuedTimeStamp":"0001-01-01T00:00:00Z","updatedTimeStamp":"0001-01-01T00:00:00Z"},"status":200}`,
+			expected: `{"data":{"tollId":"","vehicleType":"","vehicleRegistrationNo":"","twoWayToll":false,"status":"","issuedTimeStamp":"0001-01-01T00:00:00Z","updatedTimeStamp":"0001-01-01T00:00:00Z"},"status":200}`,
 		},
 	}
 	server := mockHTTPServer()
@@ -494,7 +494,7 @@ func TestHTTP_redeemTollTicket(t *testing.T) {
 				},
 			},
 			code:     200,
-			expected: `{"data":{"tollId":"","vehicleRegistrationNo":"","twoWayToll":false,"status":"","issuedTimeStamp":"0001-01-01T00:00:00Z","updatedTimeStamp":"0001-01-01T00:00:00Z"},"status":200}`,
+			expected: `{"data":{"tollId":"","vehicleType":"","vehicleRegistrationNo":"","twoWayToll":false,"status":"","issuedTimeStamp":"0001-01-01T00:00:00Z","updatedTimeStamp":"0001-01-01T00:00:00Z"},"status":200}`,
 		},
 	}
 	server := mockHTTPServer()

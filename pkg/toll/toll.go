@@ -60,7 +60,11 @@ func (s *handler) IssueTollTicket(ctx context.Context, ticket *TicketToll) error
 	}()
 
 	ticket.Price = func() float64 {
-		price := 200.0
+		priceVal := s.AppCtx.Config.Pricing.Default
+		if val, ok := s.AppCtx.Config.Pricing.VehicleType[ticket.VehicleType]; ok {
+			priceVal = val
+		}
+		price := priceVal.TwoWay
 		if !ticket.ReturnTollTicket {
 			price = 100.0
 			ticket.Status = "REDEEMED"

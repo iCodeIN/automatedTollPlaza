@@ -29,14 +29,15 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-	initCfg := &config.Cfg{}
-	if err := utils.ReadFile(mydir+"/config/config.json", utils.FileData{Data: initCfg}); err != nil {
+	initCfg := config.Cfg{}
+	if err := utils.ReadFile(mydir+"/config/config.json", utils.FileData{Data: &initCfg}); err != nil {
 		log.Panic(err)
 	}
 	appCtx := &appcontext.AppContext{
 		DbClient: mongo.NewMongoClient(ctx, mongo.Cfg{
 			Host: initCfg.MongoConfig.Host,
 		}),
+		Config:    initCfg,
 		StartTime: time.Now().Local(),
 	}
 	apiHandler := pkg.ServiceHandler{

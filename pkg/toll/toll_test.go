@@ -1,6 +1,7 @@
 package toll
 
 import (
+	"automatedTollPlaze/config"
 	"automatedTollPlaze/pkg/platform/appcontext"
 	"automatedTollPlaze/pkg/platform/db"
 	"context"
@@ -46,6 +47,28 @@ func mockAppContext() *appcontext.AppContext {
 	return &appcontext.AppContext{
 		DbClient:  &mockDBHandler{},
 		StartTime: time.Now().UTC(),
+		Config: config.Cfg{
+			Pricing: config.Pricing{
+				Default: config.PriceValue{
+					OneWay: 100,
+					TwoWay: 200,
+				},
+				VehicleType: map[string]config.PriceValue{
+					"light": {
+						OneWay: 100,
+						TwoWay: 200,
+					},
+					"moderate": {
+						OneWay: 100,
+						TwoWay: 200,
+					},
+					"heavy": {
+						OneWay: 100,
+						TwoWay: 200,
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -132,6 +155,7 @@ func Test_handler_IssueTollTicket(t *testing.T) {
 				ctx: context.Background(),
 				ticket: &TicketToll{
 					TollID:           "1",
+					VehicleType:      "light",
 					ReturnTollTicket: false,
 					RegistrationNo:   "KA 01 EA 1234",
 				},
