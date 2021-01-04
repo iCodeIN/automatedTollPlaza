@@ -69,7 +69,7 @@ func (h *HTTP) Routes() []*webgo.Route {
 		{
 			Name:    "Issue New Toll Ticket",
 			Method:  http.MethodPost,
-			Pattern: "/issue",
+			Pattern: "/tickets/issue",
 			Handlers: []http.HandlerFunc{
 				h.issueTollTicket,
 			},
@@ -77,7 +77,7 @@ func (h *HTTP) Routes() []*webgo.Route {
 		{
 			Name:    "List Ticket based on tollId, registration number and/or status",
 			Method:  http.MethodGet,
-			Pattern: "/tickets/issued",
+			Pattern: "/tickets",
 			Handlers: []http.HandlerFunc{
 				h.getTicketIssueList,
 			},

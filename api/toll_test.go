@@ -207,7 +207,7 @@ func TestHTTP_health(t *testing.T) {
 }
 
 func TestHTTP_issueTollTicket(t *testing.T) {
-	basePath := "/issue"
+	basePath := "/tickets/issue"
 
 	tests := []struct {
 		name        string
@@ -314,7 +314,7 @@ func TestHTTP_getTicketIssueList(t *testing.T) {
 		{
 			name:   "Missing Fields",
 			method: http.MethodGet,
-			url:    "/tickets/issued?tollId=",
+			url:    "/tickets?tollId=",
 			apiServices: &pkg.ServiceHandler{
 				TollHandler: mockHandler{},
 			},
@@ -324,7 +324,7 @@ func TestHTTP_getTicketIssueList(t *testing.T) {
 		{
 			name:   "Pending toll tickets",
 			method: http.MethodGet,
-			url:    "/tickets/issued?tollId=1&status=ISSUED",
+			url:    "/tickets?tollId=1&status=ISSUED",
 			apiServices: &pkg.ServiceHandler{
 				TollHandler: mockHandler{
 					GetTicketIssueListFn: func(ctx context.Context, params *toll.TicketListRequest) toll.TicketListResponse {

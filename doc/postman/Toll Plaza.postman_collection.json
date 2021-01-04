@@ -53,12 +53,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost/issue",
+					"raw": "http://localhost/tickets/issue",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"path": [
+						"tickets",
 						"issue"
 					]
 				}
@@ -71,14 +72,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost/tickets/issued?tollId=&registrationNo=KA 01 AB 1235&status=ISSUED&limit=",
+					"raw": "http://localhost/tickets?tollId=&registrationNo=KA 01 AB 1235&status=REDEEMED&limit=",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"path": [
-						"tickets",
-						"issued"
+						"tickets"
 					],
 					"query": [
 						{
@@ -91,7 +91,7 @@
 						},
 						{
 							"key": "status",
-							"value": "ISSUED"
+							"value": "REDEEMED"
 						},
 						{
 							"key": "limit",
@@ -108,14 +108,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost/tickets/27183596345597762960",
+					"raw": "http://localhost/tickets/27412469639138786747",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"path": [
 						"tickets",
-						"27183596345597762960"
+						"27412469639138786747"
 					]
 				}
 			},
@@ -127,14 +127,14 @@
 				"method": "PATCH",
 				"header": [],
 				"url": {
-					"raw": "http://localhost/tickets/27183596345597762960",
+					"raw": "http://localhost/tickets/27412469639138786747",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"path": [
 						"tickets",
-						"27183596345597762960"
+						"27412469639138786747"
 					]
 				}
 			},

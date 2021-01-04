@@ -1,0 +1,273 @@
+openapi: 3.0.1
+info:
+  title: Automated Toll Plaza
+  version: '0.1'
+servers:
+  - url: 'http://localhost:80'
+paths:
+  /:
+    get:
+      summary: Home Page
+      tags:
+        - Automated Toll Plaza
+      responses:
+        '200':
+          description: returns the home page message
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - status
+              examples:
+                '0':
+                  value:
+                    data:
+                      message: Welcome to Automated Toll Plaza
+                      startTime: '2021-01-04 11:01:38.73312 +0530 IST'
+                    status: 200
+  /health:
+    get:
+      summary: Health Check
+      tags:
+        - Automated Toll Plaza
+      responses:
+        '200':
+          description: returns the health status of application & its dependencies
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - status
+              examples:
+                '0':
+                  value:
+                    data:
+                      startTime: '2021-01-04 11:01:38.73312 +0530 IST'
+                      dependency:
+                        database: true
+                    status: 200
+  /tickets:
+    get:
+      summary: Get the list of toll tickets
+      tags:
+        - Automated Toll Plaza
+      parameters:
+        - in: query
+          name: tollId
+          required: true
+          schema:
+            type: string
+          example: 1
+          description: Toll Identifier
+        - in: query
+          name: registrationNo
+          required: true
+          schema:
+            type: string
+          example: KA 01 EA 1234
+          description: Vehicle Registration Number
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum:
+              - ISSUED
+              - REDEEMED
+            example: ISSUED
+          description: Status of the toll ticket to be listed
+        - in: query
+          name: start
+          schema:
+            type: string
+            example: 0
+          description: Pagination Support
+        - in: query
+          name: limit
+          schema:
+            type: string
+            example: 25
+          description: Pagination Support
+      responses:
+        '200':
+          description: returns the list of toll tickets
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - status
+              examples:
+                '0':
+                  value:
+                    data:
+                      list:
+                        - ticketId: 2-9047734346961988574
+                          tollId: '2'
+                          vehicleRegistrationNo: KA 01 AB 1235
+                          twoWayToll: true
+                          status: REDEEMED
+                          TotalAmount: 200
+                          issuedTimeStamp: '2021-01-02T14:25:56.464Z'
+                          updatedTimeStamp: '2021-01-02T14:25:56.464Z'
+                        - ticketId: '26034924088790976215'
+                          tollId: '2'
+                          vehicleRegistrationNo: KA 01 AB 1235
+                          twoWayToll: true
+                          status: REDEEMED
+                          TotalAmount: 200
+                          issuedTimeStamp: '2021-01-02T15:26:24.869Z'
+                          updatedTimeStamp: '2021-01-02T16:39:59.192Z'
+                        - ticketId: '22864073505826295840'
+                          tollId: '2'
+                          vehicleRegistrationNo: KA 01 AB 1235
+                          twoWayToll: true
+                          status: REDEEMED
+                          TotalAmount: 200
+                          issuedTimeStamp: '2021-01-02T16:40:22.57Z'
+                          updatedTimeStamp: '2021-01-02T16:40:48.014Z'
+                        - ticketId: '26634255005550188200'
+                          tollId: '2'
+                          vehicleRegistrationNo: KA 01 AB 1235
+                          twoWayToll: false
+                          status: REDEEMED
+                          TotalAmount: 100
+                          issuedTimeStamp: '2021-01-02T16:41:08.045Z'
+                          updatedTimeStamp: '2021-01-02T16:41:08.045Z'
+                        - ticketId: '21235529390055539447'
+                          tollId: '2'
+                          vehicleRegistrationNo: KA 01 AB 1235
+                          twoWayToll: false
+                          status: REDEEMED
+                          TotalAmount: 100
+                          issuedTimeStamp: '2021-01-02T16:42:49.278Z'
+                          updatedTimeStamp: '2021-01-02T16:42:49.278Z'
+                        - ticketId: '27183596345597762960'
+                          tollId: '2'
+                          vehicleRegistrationNo: KA 01 AB 1235
+                          twoWayToll: true
+                          status: REDEEMED
+                          TotalAmount: 200
+                          issuedTimeStamp: '2021-01-02T16:43:06.227Z'
+                          updatedTimeStamp: '2021-01-02T16:43:17.325Z'
+                        - ticketId: '2104929374906137784'
+                          tollId: '2'
+                          vehicleRegistrationNo: KA 01 AB 1235
+                          twoWayToll: true
+                          status: REDEEMED
+                          TotalAmount: 200
+                          issuedTimeStamp: '2021-01-03T07:53:52.856Z'
+                          updatedTimeStamp: '2021-01-03T07:54:05.298Z'
+                      count: 7
+                      start: 0
+                      limit: 25
+                    status: 200
+  /tickets/issue:
+    post:
+      summary: Issues a new toll ticket
+      tags:
+        - Automated Toll Plaza
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                tollId: '2'
+                vehicleRegistrationNo: KA 01 AB 1235
+                twoWayToll: true
+                status: ISSUED
+      responses:
+        '200':
+          description: returns the list of toll tickets
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - status
+              examples:
+                '0':
+                  value:
+                    data:
+                      ticketId: '28611936925559614836'
+                      tollId: '2'
+                      vehicleRegistrationNo: KA 01 AB 1235
+                      twoWayToll: true
+                      status: ISSUED
+                      TotalAmount: 200
+                      issuedTimeStamp: '2021-01-04T05:41:30.936041Z'
+                      updatedTimeStamp: '2021-01-04T05:41:30.936041Z'
+                    status: 200
+  '/tickets/{ticketId}':
+    get:
+      summary: Get Information of the toll ticket
+      tags:
+        - Automated Toll Plaza
+      parameters:
+        - in: path
+          name: ticketId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Toll Ticket Details
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - status
+              examples:
+                '0':
+                  value:
+                    data:
+                      ticketId: '28611936925559614836'
+                      tollId: '2'
+                      vehicleRegistrationNo: KA 01 AB 1235
+                      twoWayToll: true
+                      status: ISSUED
+                      TotalAmount: 200
+                      issuedTimeStamp: '2021-01-04T05:41:30.936Z'
+                      updatedTimeStamp: '2021-01-04T05:41:30.936Z'
+                    status: 200
+    put:
+      summary: Updates the status as Redeemed of the toll ticket
+      tags:
+        - Automated Toll Plaza
+      parameters:
+        - in: path
+          name: ticketId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Redeems the Toll Ticket
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - status
+              examples:
+                '0':
+                  value:
+                    data:
+                      ticketId: '28611936925559614836'
+                      tollId: '2'
+                      vehicleRegistrationNo: KA 01 AB 1235
+                      twoWayToll: true
+                      status: REDEEMED
+                      TotalAmount: 200
+                      issuedTimeStamp: '2021-01-04T05:41:30.936Z'
+                      updatedTimeStamp: '2021-01-04T06:05:47.291336Z'
+                    status: 200
