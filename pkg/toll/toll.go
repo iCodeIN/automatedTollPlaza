@@ -66,7 +66,7 @@ func (s *handler) IssueTollTicket(ctx context.Context, ticket *TicketToll) error
 		}
 		price := priceVal.TwoWay
 		if !ticket.ReturnTollTicket {
-			price = 100.0
+			price = priceVal.OneWay
 			ticket.Status = "REDEEMED"
 		}
 		return price
