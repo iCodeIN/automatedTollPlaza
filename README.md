@@ -7,7 +7,7 @@
     - ./start.sh
 - Once the script executes successfully, the application will be running on port 80.
 - This project has the postman collection using which the APIs can be tested. It can be found in directory doc/postman
+- This project has the swagger documentation for visual representation of the APIs request. It can be found in directory doc/swagger
 - To run the code coverage (or unit test cases) for the entire project, execute the below commands
     - chmod +x coverage.sh
     - ./coverage.sh
-- This project has the swagger documentation for visual representation of the APIs request
